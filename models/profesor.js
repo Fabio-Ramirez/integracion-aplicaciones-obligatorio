@@ -1,17 +1,11 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const profesorSchema = new mongoose.Schema({
-    nroId: { type: Number, required: true },
-    nombre: { type: String, required: true },
+    nombre: { type: String, required: true, unique: true },
     especialidad: { type: String, required: true },
     email: { type: String, required: true },
 });
 
 const Profesor = mongoose.model('Profesor', profesorSchema);
-profesorSchema.static('findById', function (idBuscado) {
-    console.log("id buscado: ", idBuscado)
-    return this.findOne({ nroId: idBuscado });
-});
-// Redefinir el método findById
 
-module.exports = Profesor;
+export default Profesor;
