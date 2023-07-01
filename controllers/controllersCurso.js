@@ -1,5 +1,5 @@
 import Curso from '../models/curso.js';
-
+import Estudiante from '../models/estudiante.js';
 
 export const getCursos = async (req, res) => {
     try {
@@ -105,5 +105,38 @@ export const deleteCurso = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Ha ocurrido un error al eliminar el curso' });
+    }
+};
+
+// Agregar un estudiante a un curso: 
+// Se recibe por params el idCurso y por req el nombre del estudiante 
+export const agregarEstudiante = async (req, res) => {
+    try {
+        const { idCurso } = req.params;
+        const { nombre } = req.body;
+
+        // Buscar el curso por su ID
+        const curso = await Curso.findOne({ nroId: idCurso });
+
+        if (!curso) {
+            return res.status(404).json({ message: 'Curso no encontrado' });
+        }
+
+        //Buscamos al estudiante en la bd de Estudiante
+        const estudiante = await Estudiante.findOne({ nombre: nombre });
+        if (!estudiante) {
+            return res.status(404).json({ message: 'Estudiante no encontrado' });
+        }
+
+        //Se arma el objeto para insertarlo en la bd de Curso
+        const estudianteEnCurso = { nombreEstudiante: estudiante.nombre }
+        curso.estudiantes.push(estudianteEnCurso);
+        await curso.save();
+
+        // Enviar una respuesta al cliente
+        res.status(200).json({ message: 'Estudiante en el curso' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Ha ocurrido un error al actualizar el curso' });
     }
 };

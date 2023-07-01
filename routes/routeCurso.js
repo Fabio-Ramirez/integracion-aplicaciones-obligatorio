@@ -1,7 +1,7 @@
 import express from 'express';
 import { check } from 'express-validator';
 import { validarCampos } from '../meddlewares/validar-campo.js';
-import { getCursos, getCursoById, registerCurso, updateCurso, deleteCurso } from '../controllers/controllersCurso.js';
+import { getCursos, getCursoById, registerCurso, updateCurso, deleteCurso, agregarEstudiante } from '../controllers/controllersCurso.js';
 
 const router = express.Router();
 
@@ -27,5 +27,12 @@ router.delete('/:nroId',
     ]
     ,
     deleteCurso);
+router.post('/:idCurso',
+    [
+        check('idCurso', 'El idCurso es obligatorio').not().isEmpty(),
+        check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+        validarCampos
+    ]
+    , agregarEstudiante);
 
 export default router;
