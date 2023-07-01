@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const cursoSchema = new mongoose.Schema({
     nroId: { type: Number, required: true },
@@ -7,10 +7,5 @@ const cursoSchema = new mongoose.Schema({
 });
 
 const Curso = mongoose.model('Curso', cursoSchema);
-cursoSchema.static('findById', function (idBuscado) {
-    console.log("id buscado: ", idBuscado)
-    return this.findOne({ nroId: idBuscado });
-});
-// Redefinir el método findById
 
-module.exports = Curso;
+export default Curso;
