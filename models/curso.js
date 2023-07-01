@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const cursoSchema = new mongoose.Schema({
-    nroId: { type: Number, required: true },
+    nroId: { type: Number, required: true, unique: true },
     nombre: { type: String, required: true },
     descripcion: { type: String, required: true }
 });

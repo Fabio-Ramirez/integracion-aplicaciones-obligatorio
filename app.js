@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-/*import routeCurso from './routes/routeCurso.js';*/
+import cursoRoutes from './routes/routeCurso.js';
 import estudianteRoutes from './routes/routeEstudiante.js';
 import profesorRoutes from './routes/routeProfesor.js';
 
@@ -15,5 +15,6 @@ app.use(cors());
 // Configurar rutas
 app.use('/profesor', profesorRoutes);
 app.use('/estudiante', estudianteRoutes);
+app.use('/curso', cursoRoutes);
 
 export default app 
