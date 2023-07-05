@@ -134,9 +134,62 @@ export const agregarEstudiante = async (req, res) => {
         await curso.save();
 
         // Enviar una respuesta al cliente
-        res.status(200).json({ message: 'Estudiante en el curso' });
+        res.status(200).json({ message: 'Estudiante agregado en el curso' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Ha ocurrido un error al actualizar el curso' });
     }
 };
+
+//Obtener todos los estudiantes de un curso
+export const estudiantesEnXCurso = async (req, res) => {
+    try {
+        const { idCurso } = req.params;
+
+        // Buscar el curso por su ID
+        const curso = await Curso.findOne({ nroId: idCurso });
+
+        if (!curso) {
+            return res.status(404).json({ message: 'Curso no encontrado' });
+        }
+        const listaEstudiantes = [];
+        curso.estudiantes.forEach(estudiante => {
+            listaEstudiantes.push(estudiante.nombreEstudiante);
+        })
+
+        // Enviar una respuesta al cliente
+        res.status(200).json({ message: 'Estudiantes que en el curso: ', listaEstudiantes });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Ha ocurrido un error al realizar la busqueda' });
+    }
+};
+
+//Obtener todos los cursos de un estudiante
+export const cursosEnXEstudiantes = async (req, res) => {
+    try {
+        const { nombreEstudiante } = req.params;
+
+        // Traigo la bd de Curso
+        const cursos = await Curso.find({});
+
+        const listaCursos = [];
+        cursos.forEach(curso => {
+            const estudiante = curso.estudiantes.find(estudiante => {
+                console.log("estudiante: ", estudiante);
+                return (estudiante.nombreEstudiante === nombreEstudiante)
+            });
+            if (estudiante) {
+                listaCursos.push(curso.nombre);
+            }
+        })
+
+        // Enviar una respuesta al cliente
+        res.status(200).json({ message: 'Cursos en el x estudiante: ', listaCursos });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Ha ocurrido un error al realizar la busqueda' });
+    }
+};
+
+

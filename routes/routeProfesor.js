@@ -10,12 +10,14 @@ router.get('/:id', getProfesorById);
 router.post('/',
     [
         check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+        check('email').trim().not().isEmpty().withMessage('Este campo es obligatorio').isEmail().withMessage('Debe proporcionar un correo electrónico válido'),
         validarCampos
     ]
     , registerProfesor);
 router.patch('/:id',
     [
         check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+        check('email').trim().not().isEmpty().withMessage('Este campo es obligatorio').isEmail().withMessage('Debe proporcionar un correo electrónico válido'),
         validarCampos
     ]
     ,
