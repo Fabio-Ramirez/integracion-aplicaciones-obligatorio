@@ -34,13 +34,17 @@ export const getProfesorById = async (req, res) => {
     }
 };
 
-//Registrar un profesor  
+//Registrar un profesor, verificando q no exista ninguno con el mismo nombre  
 export const registerProfesor = async (req, res) => {
     try {
-        const { nombre, especialidad, email } = req.body;
+        const { nombre, especialidad, email, password } = req.body;
+
+        // Encriptar la contraseña antes de guardarla en la base de datos
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         // Crear un nuevo profesor
-        const newProfesor = new Profesor({ nombre, especialidad, email });
+        const newProfesor = new Profesor({ nombre, especialidad, email, password: hashedPassword });
 
         const existeProfesor = await Profesor.findOne({ nombre: nombre })
         if (existeProfesor) {
@@ -61,13 +65,13 @@ export const registerProfesor = async (req, res) => {
 export const updateProfesor = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombre, especialidad, email } = req.body;
+        const { nombre, especialidad, email, password } = req.body;
 
         // Buscar y actualizar el profesor por su ID
         const profesor = await Profesor.findByIdAndUpdate(
             id,
             {
-                nombre, especialidad, email
+                nombre, especialidad, email, password
             },
             { new: true } // Devuelve el profesor actualizado
         );
@@ -109,3 +113,32 @@ export const deleteProfesor = async (req, res) => {
     }
 };
 
+
+export const loginProfesor = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        // Buscar al profesor por su email en la base de datos
+        const profesor = await Profesor.findOne({ email });
+
+        if (!profesor) {
+            return res.status(404).json({ message: 'El profesor no está registrado' });
+        }
+
+        // Validar la contraseña ingresada utilizando bcrypt.compare()
+        console.log(password, " pass ", profesor.password)
+        const isPasswordValid = await bcrypt.compare(password, profesor.password);
+
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: 'La contraseña es incorrecta' });
+        }
+
+        // La contraseña es válida, puedes generar un token de autenticación y enviarlo en la respuesta
+        // ...
+
+        res.json({ message: 'Inicio de sesión exitoso' });
+    } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        res.status(500).json({ message: 'Error del servidor' });
+    }
+};
